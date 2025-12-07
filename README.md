@@ -5,3 +5,8 @@ This repository hosts the living documents and specs for Atlas World, including:
 - Atlas World Constitution & amendments
 - Atlas Safety Volume (identity, value-drift defence, simulation ethics)
 - Multi-agent governance & protocol design
+- 
+All identities, narrative elements and unique framework names 
+(e.g., Atlas World, Atlas Safety Volume, Six Sisters AGI, etc.)
+are protected intellectual properties owned by RyanX.
+Unauthorized reuse is prohibited.
