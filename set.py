@@ -7,15 +7,14 @@ def flatten(data):
             result.append(item)
     return tuple(result)
 
-
-
 class Gc:
     def __init__(self, txt=None):
         self.l = None
         self.r = None
         self.txt = txt
-        self.ltxt=""
-        self.rtxt=""
+        self.ltxt = ""
+        self.rtxt = ""
+
     def __str__(self):
         return str(self.txt)
 
@@ -23,64 +22,57 @@ class Gc:
         if self.l is None:
             return None
         if code == "l":
-
             self.l.render("l")
             return self.l
         if code == "r":
-            
             self.r.render("r")
             return self.r
         return None
-    def render(self,code):
-        sit={
-                "r":(self.rtxt,""),
-                "l":("",self.ltxt),
-                }
-        si=sit[code]
-        self.txt=self.txt.format(r=si[0],l=si[1])
-    def spec(self,l="",r=""):
-        self.ltxt=l
-        self.rtxt=r      
+
+    def render(self, code):
+        sit = {
+            "r": (self.rtxt, ""),
+            "l": ("", self.ltxt),
+        }
+        si = sit[code]
+        self.txt = self.txt.format(r=si[0], l=si[1])
+
+    def spec(self, l="", r=""):
+        self.ltxt = l
+        self.rtxt = r      
         return self
-    def __call__(self,*args,**kargs):
-        args=flatten(args)
-        if len(args)<2:
-            args=args*2
+
+    def __call__(self, *args, **kargs):
+        args = flatten(args)
+        if len(args) < 2:
+            args = args * 2
         if kargs:
             if kargs["r"]:
-                self.r=kargs["r"]
+                self.r = kargs["r"]
             if kargs["l"]:
-                self.l=kargs["l"]
+                self.l = kargs["l"]
         if args:
-            self.r=args[0]
-            self.l=args[1]
-            #print(args)
-            
-        
-                
+            self.r = args[0]
+            self.l = args[1]
         return self
+
     def __repr__(self):
-        l=self.txt[:10].strip()
+        l = self.txt[:10].strip() if self.txt else ""
         return l
+
     @staticmethod
     def Layer(*args):
-        args=list(args) 
+        args = list(args) 
         args.reverse()
-        lst=None
+        lst = None
         for n in args:
-            #print("-"*20)
-            #print("lst:",lst,f"len:{len(lst)}")
-            #print("-"*20)
-            if type(n)==tuple:
-                #print("這裡傳回",repr(n[0](lst)))
-                n[1](lst)
-                lst=n
-
+            if isinstance(n, (tuple, list)):
+                for item in n:
+                    item(lst)
+                lst = n
             else:
-                lst=n(lst)
-        
-            
-            
+                lst = n(lst)
+        return lst
 
 indoor=Gc(
 '''
@@ -221,4 +213,3 @@ def setGc(root):
     (end,good_end),
     )
     print("完成！r或者l繼續")
-    
