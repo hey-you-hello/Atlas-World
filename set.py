@@ -1,3 +1,15 @@
+import logging
+
+
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(message)s')
+
+
+def db(*txt):
+    txt=[str(n) for n in txt]
+    msg=" ".join(txt)
+    logging.debug(msg)
+
+
 def flatten(data):
     result = []
     for item in data:
@@ -7,34 +19,37 @@ def flatten(data):
             result.append(item)
     return tuple(result)
 
-
-
-
 class Layer:
-    def __init__(self, *nodes):
-        self.nodes = list(nodes)
-        
+    def __init__(self, nodes):
+        self.nodes = nodes
+        db("layer類別構建式收到數量",len(nodes))
     def __call__(self, next_node):
         cursor = next_node
+        db(f"我得到了嗚嗚呃呃{len(self.nodes)}個節點")
         for node in reversed(self.nodes):
+
             if isinstance(node, (tuple, list)):
                 node[1](cursor)
+                node[0](cursor)
+                db(f"ok{repr(node[1])} 被連到 {repr(cursor)}")
                 cursor = node
             else:
                 cursor = node(cursor) 
-        return cursor
+                db(f"ok {repr(node)} 連到 {repr(cursor)}")
 
+        return cursor
 
 class Gc:
     def __init__(self, txt=None):
         self.l = None
         self.r = None
-        self.txt = txt
+        self.txt=txt
+        self.finaltxt = ""
         self.ltxt = ""
         self.rtxt = ""
 
     def __str__(self):
-        return str(self.txt)
+        return str(self.finaltxt)
 
     def get(self, code):
         if self.l is None:
@@ -53,7 +68,7 @@ class Gc:
             "l": ("", self.ltxt),
         }
         si = sit[code]
-        self.txt = self.txt.format(r=si[0], l=si[1])
+        self.finaltxt = self.txt.format(r=si[0], l=si[1])
 
     def spec(self, l="", r=""):
         self.ltxt = l
@@ -80,7 +95,11 @@ class Gc:
 
     @staticmethod
     def Layer(*args):
-        return Layer(args)
+        db("在Gc類別中的layer收到數量",len(args))
+        nar=list(args)
+        ch=Layer(nar)
+
+        return ch(None)
 
 indoor=Gc(
 '''
@@ -214,10 +233,11 @@ house.spec(r="不過我看你挺精神啊 哈哈")
 def setGc(root):
     print("載入劇情.....")
     Gc.Layer(
-    root,
-    indoor,
-    (house,norun),
-    ch2,
-    (end,good_end),
+        root,
+        indoor,
+        (house, norun),
+        ch2,
+        (end, good_end),
     )
     print("完成！r或者l繼續")
+
